@@ -1,16 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.*;
 import ru.yandex.practicum.filmorate.model.constraints.DateConstraint;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class User {
+public class User extends BaseModel {
 
-    static int numberOfCreated = 1;
-    private int id;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private static int numberOfCreated = 1;
     @NotBlank @Email
     private String email;
     @Pattern(regexp = "^\\S+$")
@@ -20,7 +24,8 @@ public class User {
     private LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday) {
-        id = numberOfCreated++;
+        super();
+        this.setId(numberOfCreated++);
         this.email = email;
         this.login = login;
         this.name = name == null || name.equals("") ? login : name;
