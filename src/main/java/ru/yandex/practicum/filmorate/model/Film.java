@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.practicum.filmorate.model.constraints.DateConstraint;
 import ru.yandex.practicum.filmorate.model.constraints.PositiveDurationConstraints;
@@ -14,11 +14,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Film implements IntId{
+public class Film extends BaseModel {
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private static int numberOfCreated = 1;
-    private int id;
     @NotBlank
     private String name;
     @Length(max = 200)
@@ -33,7 +35,8 @@ public class Film implements IntId{
                 String description,
                 LocalDate releaseDate,
                 @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration) {
-        id = numberOfCreated++;
+        super();
+        this.setId(numberOfCreated++);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;

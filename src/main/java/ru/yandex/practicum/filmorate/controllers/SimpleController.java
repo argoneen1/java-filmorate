@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.IntId;
+import ru.yandex.practicum.filmorate.model.BaseModel;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-public abstract class SimpleController<T extends IntId> {
+public abstract class SimpleController<T extends BaseModel> {
 
     Map<Integer, T> values = new HashMap<>();
 
@@ -59,11 +59,7 @@ public abstract class SimpleController<T extends IntId> {
         return value;
     }
 
-    protected String getElementName() {
-        throw new RuntimeException("this is abstract class");
-    }
+    protected abstract String getElementName();
 
-    protected IllegalArgumentException getExistException(int id) {
-        throw new RuntimeException("this is abstract class");
-    }
+    protected abstract IllegalArgumentException getExistException(int id);
 }
