@@ -3,11 +3,13 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.model.constraints.DateConstraint;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
-public class User {
+public class User implements IntId {
 
     static int numberOfCreated = 1;
     private int id;

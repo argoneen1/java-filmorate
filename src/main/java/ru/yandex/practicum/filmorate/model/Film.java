@@ -9,13 +9,13 @@ import ru.yandex.practicum.filmorate.model.constraints.PositiveDurationConstrain
 import ru.yandex.practicum.filmorate.model.serialization.FilmDurationDeserializer;
 import ru.yandex.practicum.filmorate.model.serialization.FilmDurationSerializer;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
 import java.time.Duration;
 import java.time.LocalDate;
 
 
 @Data
-public class Film {
+public class Film implements IntId{
 
     private static int numberOfCreated = 1;
     private int id;
