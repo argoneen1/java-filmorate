@@ -2,65 +2,39 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.Controller;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.exceptions.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/films")
-public class FilmController {
+@RequestMapping("films")
+public class FilmController extends BasicController<Film, FilmService> {
 
     @Autowired
-    private Validator validator;
-
-    Map<Integer, Film> films = new HashMap<>();
-
-    @GetMapping
-    public List<Film> get() {
-        return new ArrayList<>(films.values());
+    public FilmController(FilmService service) {
+        super(service);
     }
 
-    @PostMapping
-    public Film create(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        for (ObjectError error :bindingResult.getAllErrors()) {
-            log.warn(error.getDefaultMessage());
-        }
-        if (bindingResult.getAllErrors().size() > 0) {
-            throw new IllegalArgumentException("Illegal film`s fields state");
-        }
-        Map<LocalDate, Film> map;
-        if (films.containsKey(film.getId())) {
-            log.warn("Film " + film.getName() + " already was included.");
-            throw new FilmAlreadyExistException("Film " + film.getName() + " already was included.");
-        }
-        films.put(film.getId(), film);
-        return film;
+    @PutMapping("/{id}/like/{userId}")
+    public boolean setLike(@PathVariable(name = "id") Long filmId, // return false if like is already settled
+                           @PathVariable(name = "userId") Long userId) {
+        return service.setLike(filmId, userId);
     }
 
-    @PutMapping
-    public Film update(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        for (ObjectError error :bindingResult.getAllErrors()) {
-            log.warn(error.getDefaultMessage());
-        }
-        if (bindingResult.getAllErrors().size() > 0) {
-            throw new IllegalArgumentException("Illegal film`s fields state");
-        }
-        if (!films.containsKey(film.getId()) ) {
-            throw new IllegalArgumentException("There is no such film");
-        }
-        films.put(film.getId(), film);
-        return film;
+    @DeleteMapping("/{id}/like/{userId}")
+    public boolean deleteLike(@PathVariable(name = "id")     Long filmId, // return false if like is already settled
+                              @PathVariable(name = "userId") Long userId) {
+        return service.deleteLike(filmId, userId);
     }
+
+    @GetMapping("/popular")
+    public List<Film> getMostLikedFilms(@RequestParam(defaultValue = "10") int count) {
+        if (count <= 0)
+            throw new IllegalArgumentException("number of films must be positive");
+        return service.getMostLiked(count);
+    }
+
 }
