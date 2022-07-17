@@ -10,8 +10,14 @@ public abstract class BaseModel {
 
     @Getter
     @Setter(AccessLevel.PROTECTED)
-    private int id;
+    private long id;
 
     protected BaseModel() {
     }
+
+    public static String getElemName() {
+        throw new RuntimeException();
+    }
+
+    public abstract void setPreviousIdGeneratorValue();
 }
