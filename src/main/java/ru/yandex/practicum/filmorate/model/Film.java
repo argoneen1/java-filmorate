@@ -23,6 +23,7 @@ public class Film extends BaseModel {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
+    @ToString.Exclude
     private static int numberOfCreated = 1;
     @NotBlank
     private String name;

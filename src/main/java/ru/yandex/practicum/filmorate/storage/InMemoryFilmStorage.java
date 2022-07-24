@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.exceptions.FilmAlreadyExistException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,8 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film create(Film elem) {
         if (storage.containsKey(elem.getId())) {
-            log.warn( Film.getElemName() + " with id " + elem.getId() + " already was included.");
-            throw new FilmAlreadyExistException("Film with id " + elem.getId() + " already exists");
+            throw new FilmAlreadyExistException("Film with id " + elem.getId() + " already exists", elem.getId());
         }
         storage.put(elem.getId(), elem);
         return elem;
@@ -43,5 +43,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         storage.put(elem.getId(), elem);
         return elem;
+    }
+
+    public List<Film> getMostLiked(int count){
+        return storage.values().stream()
+                .sorted(Comparator.comparingInt(a -> -a.getLikeUserId().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

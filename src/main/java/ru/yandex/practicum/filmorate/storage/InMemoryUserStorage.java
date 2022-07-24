@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.exceptions.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.model.exceptions.UserAlreadyExistException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 public class InMemoryUserStorage implements UserStorage{
 
@@ -29,8 +28,7 @@ public class InMemoryUserStorage implements UserStorage{
     @Override
     public User create(User elem) {
         if (storage.containsKey(elem.getId())) {
-            log.warn( User.getElemName() + " with id " + elem.getId() + " already was included.");
-            throw new FilmAlreadyExistException("User with id " + elem.getId() + " already exists");
+            throw new UserAlreadyExistException("User with id " + elem.getId() + " already exists", elem.getId());
         }
         storage.put(elem.getId(), elem);
         return elem;
@@ -43,5 +41,34 @@ public class InMemoryUserStorage implements UserStorage{
         }
         storage.put(elem.getId(), elem);
         return elem;
+    }
+
+    @Override
+    public Set<User> getCommonFriends(long userId, long otherId) {
+        User user = storage.get(userId);
+        User other = storage.get(otherId);
+        return user.getFriends().stream()
+                .filter(a -> other.getFriends().contains(a))
+                .map(storage::get)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean addToFriends(long userId, long otherId) {
+        return storage.get(userId).getFriends().add(otherId) &&
+                storage.get(otherId).getFriends().add(userId);
+    }
+
+    @Override
+    public Set<User> getFriends(long id) {
+        return storage.get(id).getFriends().stream()
+                .map(storage::get)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean deleteFromFriends(long userId, long otherId) {
+        return storage.get(userId).getFriends().remove(otherId) &&
+                storage.get(otherId).getFriends().remove(userId);
     }
 }

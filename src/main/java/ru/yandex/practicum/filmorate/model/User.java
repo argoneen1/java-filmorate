@@ -17,6 +17,7 @@ public class User extends BaseModel {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
+    @ToString.Exclude
     private static long numberOfCreated = 1;
     @NotBlank @Email
     private String email;

@@ -6,10 +6,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.model.exceptions.Messages.getNoSuchElemMessage;
 
@@ -37,16 +35,13 @@ public class FilmService extends BasicService<Film, FilmStorage> {
     }
 
     public List<Film> getMostLiked(int count) {
-        return storage.get().stream()
-                .sorted(Comparator.comparingInt(a -> -a.getLikeUserId().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return storage.getMostLiked(count);
     }
 
     private void validate(long filmId, long userId) {
         if (storage.get(filmId) == null)
             throw new NoSuchElementException(getNoSuchElemMessage(filmId, Film.getElemName()));
-        if (storage.get(userId) == null)
+        if (userService.get(userId) == null)
             throw new NoSuchElementException(getNoSuchElemMessage(userId, User.getElemName()));
     }
 }

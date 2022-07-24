@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.model.exceptions.Messages.getNoSuchElemMessage;
 
@@ -23,31 +22,22 @@ public class UserService extends BasicService<User, UserStorage> {
 
     public Set<User> getCommonFriends(long userId, long otherId) {
         validateId(List.of(userId, otherId));
-        User user = storage.get(userId);
-        User other = storage.get(otherId);
-        return user.getFriends().stream()
-                .filter(a -> other.getFriends().contains(a))
-                .map(a -> storage.get(a))
-                .collect(Collectors.toSet());
+        return storage.getCommonFriends(userId, otherId);
     }
 
     public Set<User> getFriends(long id) {
         validateIsUsersExist(Set.of(id));
-        return storage.get(id).getFriends().stream()
-                .map(a -> storage.get(a))
-                .collect(Collectors.toSet());
+        return storage.getFriends(id);
     }
 
     public boolean addToFriends(long userId, long otherId) {
         validateId(List.of(userId, otherId));
-        return storage.get(userId).getFriends().add(otherId) &&
-                storage.get(otherId).getFriends().add(userId);
+        return storage.addToFriends(userId, otherId);
     }
 
     public boolean deleteFromFriends(long userId, long otherId) {
         validateId(List.of(userId, otherId));
-        return storage.get(userId).getFriends().remove(otherId) &&
-                storage.get(otherId).getFriends().remove(userId);
+        return storage.deleteFromFriends(userId, otherId);
     }
 
     private void validateIsUsersExist(Set<Long> ids) {
