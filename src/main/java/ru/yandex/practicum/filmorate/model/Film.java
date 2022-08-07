@@ -36,7 +36,25 @@ public class Film extends BaseModel {
     private Duration duration;
     @Setter(AccessLevel.NONE)
     private Set<Long> likeUserId;
+    private Set<Genre> genres;
+    private MPARating mpaRating;
 
+    enum Genre {
+        COMEDY,
+        DRAMA,
+        CARTOON,
+        THRILLER,
+        DOCUMENTARY,
+        ACTION
+    }
+
+    enum MPARating {
+        G,
+        PG,
+        PG_13,
+        R,
+        NC_17
+    }
     public Film(String name,
                 String description,
                 LocalDate releaseDate,

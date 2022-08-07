@@ -8,7 +8,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -27,7 +29,7 @@ public class User extends BaseModel {
     @DateConstraint(min = "1904-02-10", max = "now")
     private LocalDate birthday;
     @Setter(AccessLevel.NONE)
-    private final Set<Long> friends;
+    private final Map<Long, Boolean> friends;
     @Setter(AccessLevel.NONE)
     private final Set<Long> likedFilms;
 
@@ -35,7 +37,7 @@ public class User extends BaseModel {
                 String login,
                 String name,
                 LocalDate birthday,
-                Set<Long> friends,
+                Map<Long, Boolean> friends,
                 Set<Long> likedFilms) {
         super();
         this.likedFilms = likedFilms;
@@ -58,7 +60,7 @@ public class User extends BaseModel {
         this.login = login;
         this.name = name == null || name.equals("") ? login : name;
         this.birthday = birthday;
-        this.friends = new HashSet<>();
+        this.friends = new HashMap<>();
     }
 
     public boolean likeFilm(long filmId) {

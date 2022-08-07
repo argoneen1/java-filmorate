@@ -47,21 +47,26 @@ public class InMemoryUserStorage implements UserStorage{
     public Set<User> getCommonFriends(long userId, long otherId) {
         User user = storage.get(userId);
         User other = storage.get(otherId);
-        return user.getFriends().stream()
-                .filter(a -> other.getFriends().contains(a))
+        return user.getFriends().keySet().stream()
+                .filter(a -> {
+                    Boolean isConfirmed = other.getFriends().get(a);
+                    if (isConfirmed == null)
+                        return false;
+                    return isConfirmed;
+                })
                 .map(storage::get)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public boolean addToFriends(long userId, long otherId) {
-        return storage.get(userId).getFriends().add(otherId) &&
-                storage.get(otherId).getFriends().add(userId);
+        return Boolean.TRUE.equals(storage.get(userId).getFriends().put(otherId, true)) &&
+                Boolean.TRUE.equals(storage.get(otherId).getFriends().put(userId, true));
     }
 
     @Override
     public Set<User> getFriends(long id) {
-        return storage.get(id).getFriends().stream()
+        return storage.get(id).getFriends().keySet().stream()
                 .map(storage::get)
                 .collect(Collectors.toSet());
     }
