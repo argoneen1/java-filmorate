@@ -181,7 +181,7 @@ public class Film extends BaseModel {
         this.duration = duration;
         this.likeUserId = new HashSet<>();
         this.mpaRating = mpa;
-        this.genres = genres);
+        this.genres = genres;
     }
     public static String getElemName() {
         return "Film";
