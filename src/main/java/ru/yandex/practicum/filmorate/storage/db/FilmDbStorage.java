@@ -111,7 +111,7 @@ public class FilmDbStorage implements FilmStorage {
     }
     @Override
     public List<Film> getMostLiked(int count) {
-        String sqlQuery = "select ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_RATING_ID/*, COUNT(USER_ID)*/" +
+        String sqlQuery = "select ID, NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_RATING_ID, COUNT(USER_ID)" +
                 " from FILMS" +
                 " LEFT JOIN USERS_FILMS_LIKES UFL on FILMS.ID = UFL.FILM_ID " +
                 "GROUP BY ID " +

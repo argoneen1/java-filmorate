@@ -33,22 +33,6 @@ public class User extends BaseModel {
     @Setter(AccessLevel.NONE)
     private final Set<Long> likedFilms;
 
-    public User(String email,
-                String login,
-                String name,
-                LocalDate birthday,
-                Set<Long> friends,
-                Set<Long> likedFilms) {
-        super();
-        this.likedFilms = likedFilms;
-        this.setId(numberOfCreated++);
-        this.email = email;
-        this.login = login;
-        this.name = name == null || name.equals("") ? login : name;
-        this.birthday = birthday;
-        this.friends = friends;
-    }
-
     public User(@JsonProperty("email") String email,
                 @JsonProperty("login") String login,
                 @JsonProperty("name") String name,

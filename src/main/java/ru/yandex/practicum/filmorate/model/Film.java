@@ -129,35 +129,6 @@ public class Film extends BaseModel {
             return this.ordinal() + 1;
         }
     }
-
-    public Film(String name,
-                String description,
-                LocalDate releaseDate,
-                @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration,
-                Set<Long> likeUserId) {
-        super();
-        this.setId(numberOfCreated++);
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.likeUserId = likeUserId;
-    }
-
-    public Film(@JsonProperty("name") String name,
-                @JsonProperty("description") String description,
-                @JsonProperty("releaseDate") LocalDate releaseDate,
-                @JsonProperty("duration")
-                @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration) {
-        super();
-        this.setId(numberOfCreated++);
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.likeUserId = new HashSet<>();
-    }
-
     @JsonCreator
     public Film(@JsonProperty("id") long id,
                 @JsonProperty("name") String name,
