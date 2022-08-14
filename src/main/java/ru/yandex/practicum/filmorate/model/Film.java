@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -160,6 +161,27 @@ public class Film extends BaseModel {
         this.likeUserId = new HashSet<>();
         this.mpaRating = mpa;
         this.genres = EnumSet.noneOf(Film.Genre.class);
+    }
+
+    @JsonCreator
+    public Film(@JsonProperty("id") long id,
+                @JsonProperty("name") String name,
+                @JsonProperty("description") String description,
+                @JsonProperty("releaseDate") LocalDate releaseDate,
+                @JsonProperty("duration")
+                @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration,
+                @JsonProperty("mpa")
+                @JsonDeserialize(using = MpaDeserializer.class) MPARating mpa,
+                @JsonProperty("genres") EnumSet<Genre> genres) {
+        super();
+        this.setId(id);
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.likeUserId = new HashSet<>();
+        this.mpaRating = mpa;
+        this.genres = genres);
     }
     public static String getElemName() {
         return "Film";
