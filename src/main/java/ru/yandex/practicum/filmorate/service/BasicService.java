@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.model.BaseModel;
+import ru.yandex.practicum.filmorate.model.exceptions.Messages;
 import ru.yandex.practicum.filmorate.storage.BasicStorage;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static ru.yandex.practicum.filmorate.model.exceptions.Messages.getNoSuchElemMessage;
-
-public class BasicService<T extends BaseModel, U extends BasicStorage<T>> {
+public abstract class BasicService<T extends BaseModel, U extends BasicStorage<T>> {
 
     protected U storage;
 
@@ -19,9 +19,9 @@ public class BasicService<T extends BaseModel, U extends BasicStorage<T>> {
         return storage.get();
     }
 
-    public T get(long id) {
-        if (storage.get(id) == null)
-            throw new NoSuchElementException(getNoSuchElemMessage(id, T.getElemName()));
+    public Optional<T> get(long id) {
+        if (storage.get(id).isEmpty())
+            throw new NoSuchElementException(Messages.getNoSuchElemMessage(id, getElemClass()));
         return storage.get(id);
     }
 
@@ -33,4 +33,5 @@ public class BasicService<T extends BaseModel, U extends BasicStorage<T>> {
         return storage.update(elem);
     }
 
+    protected abstract Class<T> getElemClass();
 }

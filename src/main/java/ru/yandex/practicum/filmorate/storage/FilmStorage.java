@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface FilmStorage extends BasicStorage<Film> {
     List<Film> getMostLiked(int count);
+    boolean setLike(long filmId, long userId);
+    boolean deleteLike(long filmId, long userId);
 }

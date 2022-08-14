@@ -1,14 +1,15 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.exceptions.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> storage = new HashMap<>();
     @Override
@@ -17,12 +18,8 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     @Override
-    public User get(long id) {
-        User user = storage.get(id);
-        if (user == null) {
-            throw new NoSuchElementException();
-        }
-        return user;
+    public Optional<User> get(long id) {
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override
@@ -47,9 +44,9 @@ public class InMemoryUserStorage implements UserStorage{
     public Set<User> getCommonFriends(long userId, long otherId) {
         User user = storage.get(userId);
         User other = storage.get(otherId);
-        return user.getFriends().keySet().stream()
+        return user.getFriends().stream()
                 .filter(a -> {
-                    Boolean isConfirmed = other.getFriends().get(a);
+                    Boolean isConfirmed = other.getFriends().contains(a);
                     if (isConfirmed == null)
                         return false;
                     return isConfirmed;
@@ -60,13 +57,13 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public boolean addToFriends(long userId, long otherId) {
-        return Boolean.TRUE.equals(storage.get(userId).getFriends().put(otherId, true)) &&
-                Boolean.TRUE.equals(storage.get(otherId).getFriends().put(userId, true));
+        return Boolean.TRUE.equals(storage.get(userId).getFriends().add(otherId)) &&
+                Boolean.TRUE.equals(storage.get(otherId).getFriends().add(userId));
     }
 
     @Override
     public Set<User> getFriends(long id) {
-        return storage.get(id).getFriends().keySet().stream()
+        return storage.get(id).getFriends().stream()
                 .map(storage::get)
                 .collect(Collectors.toSet());
     }

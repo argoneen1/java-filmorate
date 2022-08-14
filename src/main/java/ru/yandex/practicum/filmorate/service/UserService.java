@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -14,9 +15,13 @@ import static ru.yandex.practicum.filmorate.model.exceptions.Messages.getNoSuchE
 
 @Service
 public class UserService extends BasicService<User, UserStorage> {
+    @Override
+    protected Class<User> getElemClass() {
+        return User.class;
+    }
 
     @Autowired
-    protected UserService(UserStorage storage) {
+    protected UserService(@Qualifier("UserDbStorage") UserStorage storage) {
         super(storage);
     }
 
@@ -42,8 +47,8 @@ public class UserService extends BasicService<User, UserStorage> {
 
     private void validateIsUsersExist(Set<Long> ids) {
         for (long id : ids) {
-            if (storage.get(id) == null)
-                throw new NoSuchElementException(getNoSuchElemMessage(id, User.getElemName()));
+            if (storage.get(id).isEmpty())
+                throw new NoSuchElementException(getNoSuchElemMessage(id, User.class));
         }
     }
 

@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.exceptions.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,18 +14,17 @@ import java.util.stream.Collectors;
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> storage = new HashMap<>();
+    private final Map<Long, Set<Long>> likesStoredByUsers = new HashMap<>();
+    private final Map<Long, Set<Long>> likesStoredByFilms = new HashMap<>();
+
     @Override
     public List<Film> get() {
         return new ArrayList<>(storage.values());
     }
 
     @Override
-    public Film get(long id) {
-        Film film = storage.get(id);
-        if (film == null) {
-            throw new NoSuchElementException();
-        }
-        return film;
+    public Optional<Film> get(long id) {
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override
@@ -50,5 +50,26 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .sorted(Comparator.comparingInt(a -> -a.getLikeUserId().size()))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean setLike(long filmId, long userId) {
+        Set<Long> likes = likesStoredByFilms.computeIfAbsent(filmId, k -> new HashSet<>());
+        likes.add(userId);
+        likes = likesStoredByUsers.computeIfAbsent(userId, k -> new HashSet<>());
+        return likes.add(filmId);
+    }
+
+    @Override
+    public boolean deleteLike(long filmId, long userId) {
+        Set<Long> likes = likesStoredByFilms.get(filmId);
+        if (likes != null) {
+            likes.remove(userId);
+        }
+        likes = likesStoredByUsers.get(userId);
+        if (likes != null) {
+            return likes.remove(filmId);
+        }
+        return false;
     }
 }

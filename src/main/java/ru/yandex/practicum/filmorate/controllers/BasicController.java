@@ -6,12 +6,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.BaseModel;
+import ru.yandex.practicum.filmorate.model.exceptions.Messages;
 import ru.yandex.practicum.filmorate.service.BasicService;
 import ru.yandex.practicum.filmorate.storage.BasicStorage;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -33,7 +35,7 @@ public abstract class BasicController<T extends BaseModel, U extends BasicServic
 
     @GetMapping("/{id}")
     public T get(@PathVariable Integer id) {
-        return service.get(id);
+        return service.get(id).orElseThrow(() -> new NoSuchElementException(Messages.getNoSuchElemMessage(id)));
     }
 
     @PostMapping
@@ -43,7 +45,7 @@ public abstract class BasicController<T extends BaseModel, U extends BasicServic
         }
         if (!bindingResult.getAllErrors().isEmpty()) {
             value.setPreviousIdGeneratorValue();
-            throw new IllegalArgumentException("Illegal fields state");
+            throw new IllegalArgumentException(Messages.ILLEGAL_FIELDS_STATE);
         }
         return service.create(value);
     }
@@ -55,10 +57,8 @@ public abstract class BasicController<T extends BaseModel, U extends BasicServic
         }
         value.setPreviousIdGeneratorValue();
         if (!bindingResult.getAllErrors().isEmpty()) {
-            throw new IllegalArgumentException("Illegal fields state");
+            throw new IllegalArgumentException(Messages.ILLEGAL_FIELDS_STATE);
         }
         return service.update(value);
     }
-
-    //protected abstract IllegalArgumentException getExistException(int id);
 }

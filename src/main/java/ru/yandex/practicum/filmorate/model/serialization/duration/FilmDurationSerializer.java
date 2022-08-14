@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model.serialization;
+package ru.yandex.practicum.filmorate.model.serialization.duration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

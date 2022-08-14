@@ -1,15 +1,22 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 @EqualsAndHashCode
+@ToString
 public abstract class BaseModel {
 
     @Getter
-    @Setter(AccessLevel.PROTECTED)
+    @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     protected BaseModel() {
