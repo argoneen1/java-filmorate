@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -15,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.serialization.duration.FilmDurationDe
 import ru.yandex.practicum.filmorate.model.serialization.duration.FilmDurationSerializer;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -46,7 +44,6 @@ public class Film extends BaseModel {
     private EnumSet<Genre> genres;
     //@JsonSerialize (using = EnumSerializerOnlyId.class)
     @JsonProperty("mpa")
-    @NotNull
     private MPARating mpaRating;
 
     @JsonSerialize(using = EnumSerializerWithName.class)
@@ -129,25 +126,21 @@ public class Film extends BaseModel {
             return this.ordinal() + 1;
         }
     }
-    @JsonCreator
-    public Film(@JsonProperty("id") long id,
-                @JsonProperty("name") String name,
+
+    public Film(@JsonProperty("name") String name,
                 @JsonProperty("description") String description,
                 @JsonProperty("releaseDate") LocalDate releaseDate,
                 @JsonProperty("duration")
-                @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration,
-                @JsonProperty("mpa")
-                @JsonDeserialize(using = MpaDeserializer.class) MPARating mpa,
-                @JsonProperty("genres") EnumSet<Genre> genres) {
+                @JsonDeserialize(using = FilmDurationDeserializer.class) Duration duration
+    ) {
         super();
-        this.setId(id);
+        this.setId(numberOfCreated++);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likeUserId = new HashSet<>();
-        this.mpaRating = mpa;
-        this.genres = genres;
+        this.genres = EnumSet.noneOf(Genre.class);
     }
 
     public Film(@JsonProperty("id") long id,
