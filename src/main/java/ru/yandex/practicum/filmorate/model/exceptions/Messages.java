@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.model.exceptions;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Messages {
     public static final String NO_SUCH_FILM = "There is no such film";
     public static final String NO_SUCH_USER = "There is no such user";
